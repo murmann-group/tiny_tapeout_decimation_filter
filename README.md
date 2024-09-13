@@ -1,2 +1,3 @@
 # tiny_tapeout_mfcc
-## Timeline
+Contributors: Andrea Murillo and Jaeden Chang
+## timeline 
