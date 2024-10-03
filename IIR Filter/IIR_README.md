@@ -4,7 +4,7 @@
 
 ## Math Behind IIR Filter
 <div class="text-center">
-    <img src="/Images/Simplified_IIR_Circuit.png" alt="IIR Simplified Depiction" height="400px" width="400px"> 
+    <img src="/Images/Simplified_IIR_Circuit.png" alt="IIR Simplified Depiction" height="300px" width="300px"> 
 </div>
 
    $H(z) = \frac{1}{1 - z^{-1}} = \frac{Y(z)}{X(z)}$
