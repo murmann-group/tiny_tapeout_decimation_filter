@@ -3,7 +3,7 @@
 <img src="/Images/Simulink_Model.png" alt="Simulink Model">
 
 ## Math Behind IIR Filter
-<img src="/Images/Simplified_IIR_Circuit.png" alt="IIR Simplified Depiction" style="height: 100px; width:100px;align: center;"> 
+<img src="/Images/Simplified_IIR_Circuit.png" alt="IIR Simplified Depiction" style="height: 400px; width:400px;align: center;"> 
 
    $H(z) = \frac{1}{1 - z^{-1}} = \frac{Y(z)}{X(z)}$
    
