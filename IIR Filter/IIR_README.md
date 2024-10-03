@@ -3,8 +3,9 @@
 <img src="/Images/Simulink_Model.png" alt="Simulink Model">
 
 ## Math Behind IIR Filter
-<p style="align: center;">
-    <img src="/Images/Simplified_IIR_Circuit.png" alt="IIR Simplified Depiction" style="height: 400px; width:400px;align: center;"> 
+<div class="text-center">
+    <img src="/Images/Simplified_IIR_Circuit.png" alt="IIR Simplified Depiction" height="400px" width="400px"> 
+</div>
 
    $H(z) = \frac{1}{1 - z^{-1}} = \frac{Y(z)}{X(z)}$
    
@@ -13,7 +14,6 @@
    $Y(n) - Y(n - 1) = X(n)$
    
    $Y(n) = X(n) + Y(n - 1)$
-</p>
 
    To find the impulse response, we replace x(n) with the unit impulse $\delta(n)$.
 
