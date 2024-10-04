@@ -2,7 +2,7 @@
 /*
 A decimation filter in Verilog, using ...
 
-Author: Andrea Murillo, Jaeden Chang
+Author: Andrea Murillo & Jaeden Chang
 */
 
 `include "hvsync_generator.v"
