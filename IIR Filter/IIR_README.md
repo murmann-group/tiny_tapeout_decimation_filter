@@ -27,10 +27,6 @@
    
    Thus, we see that the impulse response of the filter is 0 for n < 0 and 1 for n $\geq$ 0, so $h_{i}[n] = u[n]$.
 
-
-
-
-
 ## Structure between Di and Dout 
 * First Block: Gated Counter (Single Bit Input)
 
