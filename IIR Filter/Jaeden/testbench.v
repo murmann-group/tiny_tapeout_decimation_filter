@@ -1,60 +1,82 @@
-`timescale 1ns/1ps
+module top_module (
+    input d,             // Data input for gated clock
+    input clk,           // Main clock input
+    input reset,         // Reset signal for accumulator
+    output [15:0] acc,   // 16-bit accumulator output
+    output q             // Output of the gated clock
+);
 
-module testbench;
-    // Testbench signals
-    reg d;                    // Data input for gated clock
-    reg clk;                  // Main clock input
-    reg reset;                // Reset signal for accumulator
-    wire [15:0] acc;          // 16-bit accumulator output
-    wire q;                  // Output of the gated clock
+    // Intermediate signal to connect gated clock output to accumulator clock
+    wire gated_clk;
 
-    // Instantiate the top module
-    top_module uut (
+    // Instantiate the gated clock module
+    gated_clock u1 (
         .d(d),
         .clk(clk),
-        .reset(reset),
-        .acc(acc),
-        .q(q)
+      .reset(reset),
+        .q(q),                // Gated clock output
+        .gated_clock_out(gated_clk)     // Connect to gated clock wire
     );
 
-    // Clock generation
-    initial begin
-        clk = 0;
-        forever #5 clk = ~clk; // 10ns clock period
+    // Example input value for the accumulator
+    reg [15:0] in;
+
+    // Instantiate the accumulator module using the gated clock
+    accumulator u2 (
+        .in(in),              // Connect input to the accumulator
+        .clk(gated_clk),      // Use gated clock as the clock input for accumulator
+        .reset(reset),        // Reset signal for accumulator
+        .acc(acc)             // Accumulator output
+    );
+
+    // Generate test values for in
+    always @(posedge gated_clk) begin
+        if (!reset) begin
+            in <= in + 1;    // Example: Increment input value on each gated clock
+        end
     end
 
-    // Test sequence
-    initial begin
-        // Initialize signals
-        d = 0;
-        reset = 1;
+endmodule
 
-        // Reset the system
-        #10;
-        reset = 0; // Release reset
-        #10;
+module gated_clock(
+    input d,               // Data input
+    input clk,             // Main clock signal
+    input reset,
+    output reg q,          // Output register
+    output gated_clock_out  // Gated clock output
+);
+    wire not_clk;          // Intermediate wire for NOT gate
+    wire a1;               // Intermediate wire for clock gating
+  
+    // Invert the clock signal
+    not (not_clk, clk);
 
-        // Enable gated clock and accumulate values
-        d = 1; // Enable gated clock
-        #50; // Allow some time for accumulation
+    // Clock gating using AND gate
+    and (a1, d, not_clk);
+    assign gated_clock_out = a1;
 
-        d = 0; // Disable gated clock
-        #30; // Wait and observe
-
-        // Test reset functionality
-        reset = 1; // Assert reset
-        #10;
-        reset = 0; // Release reset
-
-        // Finish simulation
-        #20;
-        $finish;
+    // Sequential logic using gated clock
+    always @(posedge gated_clock_out) begin
+      if (reset)
+          q <= 1'b0;
+      else
+          q <= d;  // Capture the value of d on the rising edge of gated clock
     end
+endmodule
 
-    // Monitor output
-    initial begin
-        $monitor("Time: %0t | d: %b | reset: %b | gated clock: %b | acc: %h", 
-                 $time, d, reset, q, acc);
+module accumulator(
+    input [15:0] in,       // 16-bit input value
+    input clk,             // Clock signal
+    input reset,           // Reset signal
+    output reg [15:0] acc  // 16-bit accumulator output
+);
+
+    // Always block triggered on the clock signal
+    always @(posedge clk) begin
+        if (reset)
+            acc <= 16'b0;   // Reset accumulator to zero
+        else
+            acc <= acc + in; // Accumulate the input value
     end
 
 endmodule
