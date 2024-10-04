@@ -1,6 +1,6 @@
 
 /*
-A decimation filter in Verilog, using ...
+Tiny tapeout decimation filter in Verilog, using ...
 
 Author: Andrea Murillo & Jaeden Chang
 */
