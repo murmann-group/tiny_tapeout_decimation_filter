@@ -1,82 +1,56 @@
-module top_module (
-    input d,             // Data input for gated clock
-    input clk,           // Main clock input
-    input reset,         // Reset signal for accumulator
-    output [15:0] acc,   // 16-bit accumulator output
-    output q             // Output of the gated clock
-);
+module tb_tt_um_murmann_group;
 
-    // Intermediate signal to connect gated clock output to accumulator clock
-    wire gated_clk;
+  // Testbench signals
+  reg [7:0] ui_in;    // Dedicated inputs
+  wire [7:0] uo_out;  // Dedicated outputs
+  reg [7:0] uio_in;   // IOs: Input path
+  wire [7:0] uio_out; // IOs: Output path
+  wire [7:0] uio_oe;  // IOs: Enable path
+  reg clk;            // clock
+  reg rst_n;          // reset (active low)
+  reg ena;            // enable
 
-    // Instantiate the gated clock module
-    gated_clock u1 (
-        .d(d),
-        .clk(clk),
-      .reset(reset),
-        .q(q),                // Gated clock output
-        .gated_clock_out(gated_clk)     // Connect to gated clock wire
-    );
+  // Instantiate the top module
+  tt_um_murmann_group uut (
+    .ui_in(ui_in),
+    .uo_out(uo_out),
+    .uio_in(uio_in),
+    .uio_out(uio_out),
+    .uio_oe(uio_oe),
+    .ena(ena),
+    .clk(clk),
+    .rst_n(rst_n)
+  );
 
-    // Example input value for the accumulator
-    reg [15:0] in;
+  // Clock generation
+  always #5 clk = ~clk; // 100MHz clock (10ns period)
 
-    // Instantiate the accumulator module using the gated clock
-    accumulator u2 (
-        .in(in),              // Connect input to the accumulator
-        .clk(gated_clk),      // Use gated clock as the clock input for accumulator
-        .reset(reset),        // Reset signal for accumulator
-        .acc(acc)             // Accumulator output
-    );
+  initial begin
+    // Initialize inputs
+    ui_in = 8'b00000000;
+    uio_in = 8'b00000000;
+    clk = 0;
+    rst_n = 0;
+    ena = 1;
 
-    // Generate test values for in
-    always @(posedge gated_clk) begin
-        if (!reset) begin
-            in <= in + 1;    // Example: Increment input value on each gated clock
-        end
+    // Release reset after some time
+    #20 rst_n = 1;
+
+    // Apply input stimulus (toggle ui_in[0] to simulate ADC input)
+    repeat(16) begin
+      #10 ui_in[0] = ~ui_in[0]; // Toggle the input every 10ns
     end
 
-endmodule
+    // Wait for decimation filter to complete
+    #100;
 
-module gated_clock(
-    input d,               // Data input
-    input clk,             // Main clock signal
-    input reset,
-    output reg q,          // Output register
-    output gated_clock_out  // Gated clock output
-);
-    wire not_clk;          // Intermediate wire for NOT gate
-    wire a1;               // Intermediate wire for clock gating
-  
-    // Invert the clock signal
-    not (not_clk, clk);
+    // Finish simulation
+    $stop;
+  end
 
-    // Clock gating using AND gate
-    and (a1, d, not_clk);
-    assign gated_clock_out = a1;
-
-    // Sequential logic using gated clock
-    always @(posedge gated_clock_out) begin
-      if (reset)
-          q <= 1'b0;
-      else
-          q <= d;  // Capture the value of d on the rising edge of gated clock
-    end
-endmodule
-
-module accumulator(
-    input [15:0] in,       // 16-bit input value
-    input clk,             // Clock signal
-    input reset,           // Reset signal
-    output reg [15:0] acc  // 16-bit accumulator output
-);
-
-    // Always block triggered on the clock signal
-    always @(posedge clk) begin
-        if (reset)
-            acc <= 16'b0;   // Reset accumulator to zero
-        else
-            acc <= acc + in; // Accumulate the input value
-    end
+  // Monitor outputs for debugging
+  initial begin
+    $monitor("At time %0t: ui_in = %b, uo_out = %b, uio_out = %b, uio_oe = %b, rst_n = %b", $time, ui_in, uo_out, uio_out, uio_oe,rst_n);
+  end
 
 endmodule
