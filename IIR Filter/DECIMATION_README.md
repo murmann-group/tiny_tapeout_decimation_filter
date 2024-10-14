@@ -1,8 +1,8 @@
-# IIR Filter
+# Decimation Filter
 
 <img src="/Images/Simulink_Model.png" alt="Simulink Model">
 
-## Math Behind IIR Filter
+## Math Behind Decimation Filter
 <div class="text-center">
     <img src="/Images/Simplified_IIR_Circuit.png" alt="IIR Simplified Depiction" height="300px" width="300px"> 
 </div>
@@ -28,9 +28,7 @@
    Thus, we see that the impulse response of the filter is 0 for n < 0 and 1 for n $\geq$ 0, so $h_{i}[n] = u[n]$.
 
 ## Structure between Di and Dout 
-* First Block: Gated Counter (Single Bit Input)
-
-* Second Block: Accumulator That Needs a Wide Bit Width
+* Two blocks are both gated counters/accumulators. The input is a single bit coming from the Delta Sigma ADC and the output is a 16 bit value. Both accumulators in series with one another creates a quadratic output.
 
 ## References 
 [1] https://wirelesspi.com/cascaded-integrator-comb-cic-filters-a-staircase-of-dsp/
