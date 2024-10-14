@@ -15,6 +15,7 @@ Without the decimation filter, the oversampled output from the Delta-Sigma ADC w
 * The input is a single bit coming from the Delta Sigma ADC and the output is a 16 bit value. In our implementation, the Decimation filter is used to reduce the sample frequency by a factor of 4.
 
 ## Math Behind Decimation Filter
+### Integrator
 <div class="text-center">
     <img src="/Images/Simplified_IIR_Circuit.png" alt="IIR Simplified Depiction" height="300px" width="300px"> 
 </div>
@@ -38,6 +39,33 @@ Without the decimation filter, the oversampled output from the Delta-Sigma ADC w
    $y(2) = 0 + 1$
    
    Thus, we see that the impulse response of the filter is 0 for n < 0 and 1 for n $\geq$ 0, so $h_{i}[n] = u[n]$.
+
+### Comb
+   $c[n] = x[n] - x[n - L]$
+
+Impulse Response
+
+   $h_{c}[n] = \delta[n] - \delta[n - L]$
+
+Frequency Response
+
+   $H_{c}(e^{jw}) = \sum_{n} h_{c}[n]e^{-jwn}$
+
+   $H_{c}(e^{jw}) = \delta[n]^{-jwn} - \delta[n - L]^{-jwn}$
+
+   $H_{c}(e^{jw}) = 1 - e^{-jwL}$
+
+   At $\delta[n-n_{0}]$ is 1 at $n_{0}$ and zero everwhere else.
+
+   $H_{c}(e^{jw}) = e^{-jw\frac{L}{2}}(e^{+jw\frac{L}{2}} - e^{-jw\frac{L}{2}})$
+
+   $H_{c}(e^{jw}) = e^{-jw\frac{L}{2}} \cdot j2sin(w\frac{L}{2})$
+
+   In terms of iscrete frequency:
+   
+   $H_{c}(f) = e^{-j\pi Lf} \cdot j2sin(\pi Lf)$
+
+   The first term and the factor j contribute to the phase only and all that is left for magnitude is a sine wave. The shape of the curve is the reason the term "comb" is used because there are L nulls in the frequency response at equally spaced intervals that makes the spectrum look like a comb.
 
 ## How to test
 * Connect an ADC with a 1 bit output and get the 16 bit output
